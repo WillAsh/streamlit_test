@@ -26,7 +26,7 @@ def send_message(prompt):
     return respuesta
 
 def handle_stream(prompt):
-    url = 'http://127.0.0.1:8000/conversation_stream'
+    url = 'https://cr-lab-chatbot-api-5xoqaolxlq-uc.a.run.app/conversation_stream'
     datos = {
         "citeReferences": False,
         "metadata": {
