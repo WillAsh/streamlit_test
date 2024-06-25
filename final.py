@@ -3,12 +3,21 @@ import json
 import requests
 import time
 
+def get_backend_models():
+    url = 'http://127.0.0.1:5000/model/get_all'
+    datos = {
+        "domain": params.get("domain","intercorp.com.pe"),
+    }
+    respuesta = requests.post(url, json=datos)
+    respuesta= respuesta.json()
+    return respuesta["data"]
 
 params= st.query_params.to_dict()
-print(params)
+backend_models= get_backend_models()
+backend_models_names= [obj['name'] for obj in backend_models]
 
 def send_message(prompt):
-    url = 'http://127.0.0.1:8000/conversation_stream'
+    url = 'http://127.0.0.1:5000/conversation_stream'
     datos = {
         "citeReferences": False,
         "metadata": {
@@ -26,17 +35,24 @@ def send_message(prompt):
     return respuesta
 
 def handle_stream(prompt):
-    url = 'https://cr-lab-chatbot-api-5xoqaolxlq-uc.a.run.app/conversation_stream'
+    url = st.session_state['backend_url']
     datos = {
         "citeReferences": False,
         "metadata": {
             "userId": "testing-izipay",
             "sessionId": "testing-session-cloud-3"
         },
-        "typeDatabase": params.get("vectorStore","db_izipay_ecommerce_app_large"),
+        "typeDatabase": params.get("vectorStore","test123"),
         "question": prompt,
         "typeModel" : model,
-        "temperature":  temp
+        "temperature":  temp,
+        "bot_data": {
+            "assistant_name": assistant_name,
+            "assistant_role" : assistant_role,
+            "company_name": company_name,
+            "company_activity": company_activity,
+            "conversation_purpose": conversation_purpose
+        }
     }
     encabezados = {'token': 'my-secret-token'}
     errors = []
@@ -54,9 +70,12 @@ def handle_stream(prompt):
                     key= json_data.get('key','')
                     key_type = json_data.get('key_type','')
                     error = json_data.get('error', '')
+
                     if success:
                         content = json_data.get('content')
+                        print("metadata", content)
                         if is_metadata:
+
                             if key_type == 'list':
                                 if not key in response_data:
                                     response_data[key] = []
@@ -67,22 +86,26 @@ def handle_stream(prompt):
                         else:
                             result += content
                             yield content
-                            time.sleep(0.02)
+                            #time.sleep(0.02)
                             #print(content, end='', flush=True)
                     else:
                         print(error)
                         errors.append(error)
 
             except Exception as e:
+                print(e)
                 errors.append(str(e))
-        print("data",response_data)
-        with st.expander("Referencias"):
-            for count, ref in enumerate(response_data["citations"]):
-                st.write(f"[{count+1}]", ref["page_content"])
-                st.write("Metadata: ", ref["metadata"])
+        print("data", response_data)
+        #with st.expander("Referencias"):
+            #for count, ref in enumerate(response_data.get("citations")):
+                #st.write(f"[{count+1}]", ref["page_content"])
+                #st.write("Metadata: ", ref["metadata"])
             #st.write("[1]",response_data["citations"]["page_content"])
             #st.write("Metadata: ", response_data["citations"]["metadata"])
+        print("dbug",result)
         return result
+
+
 
 session1=[
             {"role": "user", "content": "sesion1 sw"},
@@ -97,6 +120,13 @@ def switch_chat():
             {"role": "user", "content": "s2"},
             {"role": "assistant", "content": "sesion2"},
         ]
+def set_backend_url():
+    backend_selected= st.session_state['backend_model_selected']
+    print("selected",backend_selected)
+    ref= next(obj for obj in backend_models if obj['name'] == backend_selected)
+    st.session_state['backend_url'] = ref.get("endpoint")
+    st.session_state['has_stream'] = ref.get("has_stream",False)
+    print(st.session_state['backend_url'])
 
 sesiones=(
     "sesion 1",
@@ -115,6 +145,10 @@ OPENAI_CHAT_MODELS = (
     "gpt-4-0314",
     "gpt-4-32k-0314",
 )
+BACKEND_MODELS=(
+    "izipay_backend",
+    "crewai_backend"
+)
 
 st.title("Qdrant chat")
 
@@ -123,22 +157,32 @@ st.title("Qdrant chat")
 #st.markdown(f'<iframe src="{pdf_url}" width="700" height="500"></iframe>', unsafe_allow_html=True)
 
 with st.sidebar:
-    session = st.selectbox("Sesión/chat", sesiones, key="session", on_change=switch_chat)
-    model = st.selectbox("Modelo", OPENAI_CHAT_MODELS, key="model")
+    #session = st.selectbox("Sesión/chat", sesiones, key="session", on_change=switch_chat)
+    model = st.selectbox("Modelo OPENAI", OPENAI_CHAT_MODELS, key="model")
     temp= st.slider('Temperature', 0.0, 1.0, 0.2)
-
-if "session" not in st.session_state:
-    st.session_state["session"] = session
-
+    backend_model_selected=st.selectbox("Modelo backend",backend_models_names, key="backend_model_selected", on_change=set_backend_url)
+    assistant_name= st.text_input("Nombre del asistente", "UTPBot")
+    assistant_role= st.text_input("Rol del asistente", "Representante informativo")
+    company_name= st.text_input("Nombre de la empresa", "UTP")
+    company_activity= st.text_input("Rubro de la empresa", "Universidad Tecnológica del Perú")
+    conversation_purpose= st.text_input("Propósito de la conversación", 'Brindar información concisa sobre la universidad Tecnológica del Perú.')
+#if "session" not in st.session_state:
+   # st.session_state["session"] = session
+if "backend_url" not in st.session_state:
+    st.session_state["backend_url"]=""
+if "has_stream" not in st.session_state:
+    st.session_state["has_stream"]=False
+if "backend_model_selected" not in st.session_state:
+    st.session_state["backend_model_selected"]="test"
 if "messages" not in st.session_state:
-
-    if st.session_state["session"]== "sesion 1":
-        st.session_state.messages = []
-    if st.session_state["session"]== "sesion 2":
-        st.session_state.messages = [
-            {"role": "user", "content": "aaaa"},
-            {"role": "assistant", "content": "sesion2"},
-        ]
+    st.session_state["messages"]=[]
+    #if st.session_state["session"]== "sesion 1":
+     #   st.session_state.messages = []
+    #if st.session_state["session"]== "sesion 2":
+     #   st.session_state.messages = [
+      #      {"role": "user", "content": "aaaa"},
+       #     {"role": "assistant", "content": "sesion2"},
+        #]
 
 if "session1" not in st.session_state:
     st.session_state.session1 =[]
