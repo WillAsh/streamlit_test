@@ -4,7 +4,7 @@ import requests
 import time
 
 def get_backend_models():
-    url = 'http://127.0.0.1:5000/model/get_all'
+    url = 'https://cr-lab-qdrant-5xoqaolxlq-uc.a.run.app/model/get_all'
     datos = {
         "domain": params.get("domain","intercorp.com.pe"),
     }
