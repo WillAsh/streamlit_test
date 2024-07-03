@@ -17,23 +17,18 @@ backend_models= get_backend_models()
 backend_models_names= [obj['name'] for obj in backend_models]
 
 def send_message(prompt):
-    url = 'http://127.0.0.1:5000/conversation_stream'
+    url = st.session_state['backend_url']
     datos = {
-        "citeReferences": False,
-        "metadata": {
-            "userId": "testing-izipay",
-            "sessionId": "testing-session-cloud-3"
-        },
-        "typeDatabase": "app",
         "question": prompt
     }
-    encabezados = {'token': 'my-secret-token'}
+    encabezados = {'token': 'andina-chatbot-wrfkKF1e5fbfEuCg4o1V7Tpk8iKXGCLttRMHXBCLiv'}
     respuesta = requests.post(url, stream=True, json=datos, headers=encabezados)
-    #data=respuesta.json()
-    #response=data['answer']
-    #if respuesta.status_code == 200:
-    return respuesta
+    respuesta = respuesta.json()
 
+    # data=respuesta.json()
+    # response=data['answer']
+    # if respuesta.status_code == 200:
+    return respuesta.get("answer")
 def handle_stream(prompt):
     url = st.session_state['backend_url']
     datos = {
@@ -46,13 +41,13 @@ def handle_stream(prompt):
         "question": prompt,
         "typeModel" : model,
         "temperature":  temp,
-        "bot_data": {
-            "assistant_name": assistant_name,
-            "assistant_role" : assistant_role,
-            "company_name": company_name,
-            "company_activity": company_activity,
-            "conversation_purpose": conversation_purpose
-        }
+        #"bot_data": {
+        #    "assistant_name": assistant_name,
+        #    "assistant_role" : assistant_role,
+        #    "company_name": company_name,
+        #    "company_activity": company_activity,
+        #    "conversation_purpose": conversation_purpose
+        #    }
     }
     encabezados = {'token': 'my-secret-token'}
     errors = []
@@ -145,27 +140,19 @@ OPENAI_CHAT_MODELS = (
     "gpt-4-0314",
     "gpt-4-32k-0314",
 )
-BACKEND_MODELS=(
-    "izipay_backend",
-    "crewai_backend"
-)
 
-st.title("Qdrant chat")
-
-#pdf_url = "https://www.buds.com.ua/images/Lorem_ipsum.pdf"
-
-#st.markdown(f'<iframe src="{pdf_url}" width="700" height="500"></iframe>', unsafe_allow_html=True)
+st.title("PLAYGROUND")
 
 with st.sidebar:
     #session = st.selectbox("Sesión/chat", sesiones, key="session", on_change=switch_chat)
     model = st.selectbox("Modelo OPENAI", OPENAI_CHAT_MODELS, key="model")
     temp= st.slider('Temperature', 0.0, 1.0, 0.2)
     backend_model_selected=st.selectbox("Modelo backend",backend_models_names, key="backend_model_selected", on_change=set_backend_url)
-    assistant_name= st.text_input("Nombre del asistente", "UTPBot")
-    assistant_role= st.text_input("Rol del asistente", "Representante informativo")
-    company_name= st.text_input("Nombre de la empresa", "UTP")
-    company_activity= st.text_input("Rubro de la empresa", "Universidad Tecnológica del Perú")
-    conversation_purpose= st.text_input("Propósito de la conversación", 'Brindar información concisa sobre la universidad Tecnológica del Perú.')
+    #assistant_name= st.text_input("Nombre del asistente", "UTPBot")
+    #assistant_role= st.text_input("Rol del asistente", "Representante informativo")
+    #company_name= st.text_input("Nombre de la empresa", "UTP")
+    #company_activity= st.text_input("Rubro de la empresa", "Universidad Tecnológica del Perú")
+    #conversation_purpose= st.text_input("Propósito de la conversación", 'Brindar información concisa sobre la universidad Tecnológica del Perú.')
 #if "session" not in st.session_state:
    # st.session_state["session"] = session
 if "backend_url" not in st.session_state:
@@ -198,7 +185,7 @@ for message in st.session_state.messages:
 
 
 if prompt := st.chat_input("Escribe un mensaje"):
-
+    #st.image( "https://s3-us-west-2.amazonaws.com/uw-s3-cdn/wp-content/uploads/sites/6/2017/11/04133712/waterfall.jpg",width=400)
     st.session_state.messages.append({"role": "user", "content": prompt})
     st.session_state.session1.append({"role": "user", "content": prompt})
 
@@ -208,7 +195,15 @@ if prompt := st.chat_input("Escribe un mensaje"):
     with st.chat_message("assistant"):
         question = prompt
         #stream=send_message(question)
-        response = st.write_stream(handle_stream(question))
+        if st.session_state["has_stream"]:
 
-    st.session_state.messages.append({"role": "assistant", "content": response})
-    st.session_state.session1.append({"role": "assistant", "content":response})
+            response = st.write_stream(handle_stream(question))
+            st.session_state.messages.append({"role": "assistant", "content": response})
+            st.session_state.session1.append({"role": "assistant", "content": response})
+        else:
+            answer = send_message(question)
+            response = st.write(answer)
+            st.session_state.messages.append({"role": "assistant", "content": answer})
+            st.session_state.session1.append({"role": "assistant", "content": response})
+
+
