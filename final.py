@@ -32,6 +32,7 @@ def send_message(prompt):
 
     if respuesta.get("image_url",None) is not None:
         print(respuesta["image_url"])
+        st.image(respuesta["image_url"])
     if respuesta.get("schema_table",None) is not None:
         df = pd.DataFrame(respuesta["schema_table"])
         st.dataframe(df)
