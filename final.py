@@ -1,6 +1,7 @@
 import streamlit as st
 import json
 import requests
+import pandas as pd
 import time
 
 def get_backend_models():
@@ -24,11 +25,21 @@ def send_message(prompt):
     encabezados = {'token': 'andina-chatbot-wrfkKF1e5fbfEuCg4o1V7Tpk8iKXGCLttRMHXBCLiv'}
     respuesta = requests.post(url, stream=True, json=datos, headers=encabezados)
     respuesta = respuesta.json()
+    answer = respuesta.get("answer")
+    response = st.write(answer)
+    st.session_state.messages.append({"role": "assistant", "content": answer})
+    st.session_state.session1.append({"role": "assistant", "content": response})
 
+    if respuesta.get("image_url",None) is not None:
+        print(respuesta["image_url"])
+    if respuesta.get("schema_table",None) is not None:
+        df = pd.DataFrame(respuesta["schema_table"])
+        st.dataframe(df)
     # data=respuesta.json()
     # response=data['answer']
     # if respuesta.status_code == 200:
-    return respuesta.get("answer")
+
+
 def handle_stream(prompt):
     url = st.session_state['backend_url']
     datos = {
@@ -141,7 +152,7 @@ OPENAI_CHAT_MODELS = (
     "gpt-4-32k-0314",
 )
 
-st.title("PLAYGROUND")
+st.title("Playground demos")
 
 with st.sidebar:
     #session = st.selectbox("Sesión/chat", sesiones, key="session", on_change=switch_chat)
@@ -202,8 +213,6 @@ if prompt := st.chat_input("Escribe un mensaje"):
             st.session_state.session1.append({"role": "assistant", "content": response})
         else:
             answer = send_message(question)
-            response = st.write(answer)
-            st.session_state.messages.append({"role": "assistant", "content": answer})
-            st.session_state.session1.append({"role": "assistant", "content": response})
+
 
 
