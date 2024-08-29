@@ -83,7 +83,7 @@ def send_message(prompt_):
 
 st.title("Demo sesiones")
 
-client = OpenAI(api_key="sk-intercorp-D8GyqPTebT7rMVpUvdo8T3BlbkFJvlPEtwcwjDRUgCEzKihg")
+client = OpenAI(api_key="sk-g")
 
 if "openai_model" not in st.session_state:
     st.session_state["openai_model"] = "gpt-3.5-turbo"
