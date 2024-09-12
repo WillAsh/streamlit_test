@@ -3,7 +3,7 @@ import json
 import requests
 import pandas as pd
 import time
-
+params= st.query_params.to_dict()
 def get_backend_models():
     url = 'https://cr-lab-qdrant-5xoqaolxlq-uc.a.run.app/model/get_all'
     datos = {
@@ -13,7 +13,6 @@ def get_backend_models():
     respuesta= respuesta.json()
     return respuesta["data"]
 
-params= st.query_params.to_dict()
 backend_models= get_backend_models()
 backend_models_names= [obj['name'] for obj in backend_models]
 
