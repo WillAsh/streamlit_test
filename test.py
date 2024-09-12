@@ -77,24 +77,12 @@ OPENAI_CHAT_MODELS = (
 st.title("Qdrant chat")
 
 with st.sidebar:
-    session = st.selectbox("Sesión/chat", sesiones, key="model", on_change=switch_chat)
+    #session = st.selectbox("Sesión/chat", sesiones, key="model", on_change=switch_chat)
     temp= st.slider('Temperature', 0.0, 1.0, 0.2)
 
-if "session" not in st.session_state:
-    st.session_state["session"] = session
-
 if "messages" not in st.session_state:
+    st.session_state.messages = []
 
-    if st.session_state["session"]== "sesion 1":
-        st.session_state.messages = [
-            {"role": "user", "content": "sesion 1"},
-            {"role": "assistant", "content": "sesion 1"},
-        ]
-    if st.session_state["session"]== "sesion 2":
-        st.session_state.messages = [
-            {"role": "user", "content": "aaaa"},
-            {"role": "assistant", "content": "sesion2"},
-        ]
 client = OpenAI(api_key="sk-intercorp-D8GyqPTebT7rMVpUvdo8T3BlbkFJvlPEtwcwjDRUgCEzKihg")
 
 
@@ -143,8 +131,6 @@ if prompt := st.chat_input("What is up?"):
         response = st.write_stream(stream)
 
         #response2 = st.write(response)
-        print(response)
-
 
     st.session_state.messages.append({"role": "assistant", "content": response})
 
