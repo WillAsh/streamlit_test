@@ -6,7 +6,7 @@ from langchain_openai import OpenAIEmbeddings
 from qdrant_client import QdrantClient
 from langchain_community.vectorstores import Qdrant
 
-embeddings = OpenAIEmbeddings(model='text-embedding-3-large',openai_api_key="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")
+embeddings = OpenAIEmbeddings(model='text-embedding-3-large',openai_api_key="sk-intercorp-D8GyqPTebT7rMVpUvdo8T3BlbkFJvlPEtwcwjDRUgCEzKihg")
 
 def send_message(prompt):
     url = 'http://127.0.0.1:8000/conversation'
@@ -45,8 +45,8 @@ def switch_chat():
 def get_vectorstore(collection: str):
     # embeddings = LLM_EMBEDDINGS()
     client = QdrantClient(
-        url="https://ca0a7f3c-a0e4-4810-9b0d-4b3469b6fd86.us-east4-0.gcp.cloud.qdrant.io:6333",
-        api_key="cauOrINnZUCDY2CEj2L3d9F0J2P-_rWJimzFQSqDN5Ljq_HKgTNWtA"
+        url="https://2c83a069-f856-4e1d-b84e-a48381264b38.europe-west3-0.gcp.cloud.qdrant.io:6333",
+        api_key="4T9h5CAy1zvQ7LUCT15Jfz5_fFvTt7uSd5yBIaWZiKHGDN7jxXY5VA"
     )
     vectorstore = Qdrant(
         client,
@@ -95,10 +95,10 @@ if "messages" not in st.session_state:
             {"role": "user", "content": "aaaa"},
             {"role": "assistant", "content": "sesion2"},
         ]
-client = OpenAI(api_key="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")
+client = OpenAI(api_key="sk-intercorp-D8GyqPTebT7rMVpUvdo8T3BlbkFJvlPEtwcwjDRUgCEzKihg")
 
 
-openai_prompt="Actúa como asistente de la Universidad Tecnológica del Perú, usarás únicamente esta información para tu respuesta: {} para responder a la siguiente petición : {}"
+openai_prompt="Actúa como asistente de la cadena de hoteles Casa Andina usarás únicamente esta información para tu respuesta: {} para responder a la siguiente petición : {}"
 if "openai_model" not in st.session_state:
     st.session_state["openai_model"] = "gpt-3.5-turbo"
 
@@ -118,22 +118,32 @@ if prompt := st.chat_input("What is up?"):
         #email = st.query_params["email"]
         #vectorstorea = st.query_params["vectorStore"]
         question = prompt
-        response=st.write(send_message(question))
+        #response=st.write(send_message(question))
 
-        #retrieval = vectorstore.similarity_search_with_relevance_scores(question, k=5)
-        #retrieval_ = [tupla[0] for tupla in retrieval]
-        #full_prompt=''
-        #for index,doc in enumerate(retrieval_):
-            #aux= f'{index+1}. {doc.page_content} \n'
-            #full_prompt +=aux
-        #print(full_prompt)
-        #final_prompt= openai_prompt.format(full_prompt,prompt)
-        #open_ai_array.append({"role": "user", "content": final_prompt})
-        #response = full_prompt
+        retrieval = vectorstore.similarity_search_with_relevance_scores(question, k=5)
+        retrieval_ = [tupla[0] for tupla in retrieval]
+        full_prompt=''
+        for index,doc in enumerate(retrieval_):
+            aux= f'{index+1}. {doc.page_content} \n'
+            full_prompt +=aux
+        print("prompt:",full_prompt)
+        final_prompt= openai_prompt.format(full_prompt,prompt)
+        open_ai_array.append({"role": "user", "content": final_prompt})
+        response = full_prompt
+
+        stream = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": m["role"], "content": m["content"]}
+                for m in open_ai_array
+            ],
+            temperature=temp,
+            stream=True,
+        )
+        response = st.write_stream(stream)
+
         #response2 = st.write(response)
-        #response= email
-        #response2= st.write(response)
-        #print(response)
+        print(response)
 
 
     st.session_state.messages.append({"role": "assistant", "content": response})

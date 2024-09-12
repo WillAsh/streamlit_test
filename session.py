@@ -6,33 +6,7 @@ import requests
 from streamlit_cookies_manager import EncryptedCookieManager
 
 cookies = EncryptedCookieManager(prefix="test", password="some_secret_password")
-json_data = {
-        "Hotel": ["CAST Arequipa", "CAS Arequipa", "CAP Arequipa", "CAST San Blas", "CAST Cusco Plaza", "CAST Catedral", "CAP Cusco", "CAST San Antonio", "CAST Benavides", "CAS Miraflores", "CAP Miraflores", "CAST Puno", "CAP Puno", "CAST Colca", "CAST Nasca", "CAST Machu Picchu", "CAP Valle", "Centro by Casa Andina", "CAP Piura", "CAST Piura", "CAS Chiclayo", "CAC Chincha", "CAS Pucallpa", "CAS Tacna", "CAS Moquegua", "CAS Tumbes", "CAST Talara", "CAST Trujillo", "CAP San Isidro", "CAS Paracas"],
-        "Inventario": [105, 58, 40, 41, 70, 42, 93, 52, 94, 155, 148, 50, 45, 52, 60, 53, 91, 58, 83, 37, 130, 74, 90, 150, 78, 79, 36, 46, 157, 149],
-        "Ene.": [20, 7, 5, 10, 10, 10, 15, 8, 15, 15, 10, 10, 5, 10, 10, 10, 10, 8, None, None, None, None, None, None, None, None, None, None, None, None],
-        "Feb.": [20, 7, 5, 10, 10, 10, 15, 8, 15, 15, 10, 10, 5, 10, 10, 10, 10, 8, None, None, None, None, None, None, None, None, None, None, None, None],
-        "Mar.": [20, 7, 5, 10, 10, 10, 15, 8, 15, 15, 10, 10, 5, 10, 10, 10, 10, 8, None, None, None, None, None, None, None, None, None, None, None, None],
-        "Abr.": [20, 7, 5, 10, 10, 10, 15, 8, 15, 15, 10, 10, 5, 10, 10, 10, 10, 8, None, None, None, None, None, None, None, None, None, None, None, None],
-        "May.": [20, 7, 5, 10, 10, 10, 15, 8, 15, 15, 10, 10, 5, 10, 10, 10, 10, 8, None, None, None, None, None, None, None, None, None, None, None, None],
-        "Jun.": [20, 7, 5, 10, 10, 10, 15, 8, 15, 15, 10, 10, 5, 10, 10, 10, 10, 8, None, None, None, None, None, None, None, None, None, None, None, None],
-        "Jul.": [20, 7, 5, 10, 10, 10, 15, 8, 15, 15, 10, 10, 5, 10, 10, 10, 10, 8, None, None, None, None, None, None, None, None, None, None, None, None],
-        "Ago.": [20, 7, 5, 10, 10, 10, 15, 8, 15, 15, 10, 10, 5, 10, 10, 10, 10, 8, None, None, None, None, None, None, None, None, None, None, None, None],
-        "Sep.": [20, 7, 5, 10, 10, 10, 15, 8, 15, 15, 10, 10, 5, 10, 10, 10, 10, 8, None, None, None, None, None, None, None, None, None, None, None, None],
-        "Oct.": [20, 7, 5, 10, 10, 10, 15, 8, 15, 15, 10, 10, 5, 10, 10, 10, 10, 8, None, None, None, None, None, None, None, None, None, None, None, None],
-        "Nov.": [20, 7, 5, 10, 10, 10, 15, 8, 15, 15, 10, 10, 5, 10, 10, 10, 10, 8, None, None, None, None, None, None, None, None, None, None, None, None],
-        "Dic.": [20, 7, 5, 10, 10, 10, 15, 8, 15, 15, 10, 10, 5, 10, 10, 10, 10, 8, None, None, None, None, None, None, None, None, None, None, None, None]}
-df = pd.DataFrame(json_data)
 
-def highlight(val):
-    color = 'green' if val > 50 else ''
-    return f'background-color: {color}'
-
-    # Aplica el estilo a la columna 'age'
-
-
-styled_df = df.style.applymap(highlight, subset=['Inventario'])
-#st.write("Tabla Dinámica:")
-#st.dataframe(styled_df)
 if not cookies.ready():
     st.stop()
 def get_user_uuid():
@@ -83,7 +57,7 @@ def send_message(prompt_):
 
 st.title("Demo sesiones")
 
-client = OpenAI(api_key="sk-g")
+client = OpenAI(api_key="sk-intercorp-D8GyqPTebT7rMVpUvdo8T3BlbkFJvlPEtwcwjDRUgCEzKihg")
 
 if "openai_model" not in st.session_state:
     st.session_state["openai_model"] = "gpt-3.5-turbo"
