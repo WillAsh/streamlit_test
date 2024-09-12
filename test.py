@@ -29,19 +29,7 @@ def send_message(prompt):
         print('La solicitud POST fue exitosa.')
     else:
         print('La solicitud POST falló. Código de estado:', respuesta.status_code)
-def switch_chat():
-    model_aux= st.session_state['model']
-    print("asdasdasd", model_aux)
-    if model_aux== "sesion 1":
-        st.session_state.messages = [
-            {"role": "user", "content": "sesion1 sw"},
-            {"role": "assistant", "content": "sesion1 sw"},
-        ]
-    if model_aux== "sesion 2":
-        st.session_state.messages = [
-            {"role": "user", "content": "s2"},
-            {"role": "assistant", "content": "sesion2"},
-        ]
+
 def get_vectorstore(collection: str):
     # embeddings = LLM_EMBEDDINGS()
     client = QdrantClient(
@@ -54,8 +42,8 @@ def get_vectorstore(collection: str):
         embeddings=embeddings)
     return vectorstore
 
-
-vectorstore = get_vectorstore("test123")
+vs_name=st.query_params["vectorStore"]
+vectorstore = get_vectorstore(vs_name)
 sesiones=(
     "sesion 1",
     "sesion 2"
