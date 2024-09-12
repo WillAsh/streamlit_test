@@ -4,6 +4,7 @@ import requests
 import pandas as pd
 import time
 params= st.query_params.to_dict()
+print(params)
 def get_backend_models():
     url = 'https://cr-lab-qdrant-5xoqaolxlq-uc.a.run.app/model/get_all'
     datos = {
