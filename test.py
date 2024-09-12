@@ -62,7 +62,7 @@ OPENAI_CHAT_MODELS = (
     "gpt-4-32k-0314",
 )
 
-st.title("Qdrant chat")
+st.title("Demo chatbot")
 
 with st.sidebar:
     #session = st.selectbox("Sesión/chat", sesiones, key="model", on_change=switch_chat)
