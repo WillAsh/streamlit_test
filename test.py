@@ -44,28 +44,10 @@ def get_vectorstore(collection: str):
 
 vs_name=st.query_params["vectorStore"]
 vectorstore = get_vectorstore(vs_name)
-sesiones=(
-    "sesion 1",
-    "sesion 2"
-)
-OPENAI_CHAT_MODELS = (
-    "gpt-3.5-turbo",
-    "gpt-3.5-turbo-16k",
-    "gpt-3.5-turbo-0613",
-    "gpt-3.5-turbo-16k-0613",
-    "gpt-3.5-turbo-0301",
-    "gpt-4",
-    "gpt-4-0613",
-    "gpt-4-32k",
-    "gpt-4-32k-0613",
-    "gpt-4-0314",
-    "gpt-4-32k-0314",
-)
 
 st.title("Demo chatbot")
 
 with st.sidebar:
-    #session = st.selectbox("Sesión/chat", sesiones, key="model", on_change=switch_chat)
     temp= st.slider('Temperature', 0.0, 1.0, 0.2)
 
 if "messages" not in st.session_state:
@@ -99,8 +81,10 @@ if prompt := st.chat_input("What is up?"):
         retrieval = vectorstore.similarity_search_with_relevance_scores(question, k=5)
         retrieval_ = [tupla[0] for tupla in retrieval]
         full_prompt=''
+        docs_qdrant=[]
         for index,doc in enumerate(retrieval_):
             aux= f'{index+1}. {doc.page_content} \n'
+            docs_qdrant.append(aux)
             full_prompt +=aux
         print("prompt:",full_prompt)
         final_prompt= openai_prompt.format(full_prompt,prompt)
@@ -117,6 +101,10 @@ if prompt := st.chat_input("What is up?"):
             stream=True,
         )
         response = st.write_stream(stream)
+        with st.expander("Referencias"):
+            for count, ref in enumerate(retrieval_):
+                st.write(f"[{count+1}]", ref.page_content)
+                st.write("Metadata: ", ref.metadata)
 
         #response2 = st.write(response)
 
