@@ -56,7 +56,7 @@ if "messages" not in st.session_state:
 client = OpenAI(api_key="sk-intercorp-D8GyqPTebT7rMVpUvdo8T3BlbkFJvlPEtwcwjDRUgCEzKihg")
 
 
-openai_prompt="Actúa como asistente de la cadena de hoteles Casa Andina usarás únicamente esta información para tu respuesta: {} para responder a la siguiente petición : {}"
+openai_prompt="Actúa como asistente de información, usarás únicamente esta información para tu respuesta: {} para responder a la siguiente petición : {}"
 if "openai_model" not in st.session_state:
     st.session_state["openai_model"] = "gpt-3.5-turbo"
 
