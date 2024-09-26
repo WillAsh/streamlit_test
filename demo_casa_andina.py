@@ -97,8 +97,8 @@ with col1:
             st.markdown(prompt)
         with messages.chat_message("assistant"):
             question = prompt
-            #answer = send_message(question)
-            answer= "xdsadsadsad"
+            answer = send_message(question)
+            #answer= "xdsadsadsad"
             st.markdown(answer)
             st.session_state.messages.append({"role": "assistant", "content": answer})
 
