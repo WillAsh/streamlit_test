@@ -2,6 +2,7 @@ import streamlit as st
 import json
 import requests
 import time
+st.set_page_config(page_title="Cinceplanet BOT",page_icon="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1GC53b5X0VCsnupZ_407_-C-Og0Z2y_yl8Q&s")
 
 def send_message(prompt):
     url = 'https://dev-ai-chatbot-cineplanet-yutgchy3pa-uc.a.run.app/conversation'
