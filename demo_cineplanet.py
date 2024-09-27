@@ -24,7 +24,7 @@ def send_message(prompt):
     return respuesta.get("answer")
 
 
-st.title("Cineplanet Chatbot")
+st.title("Cineplanet ChatBot")
 
 #with st.sidebar:
     #st.write("Chatbot Cineplanet")
