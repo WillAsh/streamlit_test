@@ -91,6 +91,8 @@ with col1:
         for message in st.session_state.messages:
             with messages.chat_message(message["role"]):
                 st.markdown(message["content"])
+    #col3,col4 = st.columns([4,1])
+    #with col3:
     if prompt := st.chat_input("Escribe un mensaje"):
         st.session_state.messages.append({"role": "user", "content": prompt})
         with messages.chat_message("user"):
@@ -101,6 +103,8 @@ with col1:
             #answer= "xdsadsadsad"
             st.markdown(answer)
             st.session_state.messages.append({"role": "assistant", "content": answer})
+    #with col4:
+        #st.button("reset")
 
 with col2:
 
