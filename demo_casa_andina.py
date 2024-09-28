@@ -3,6 +3,7 @@ import streamlit.components.v1 as components
 import requests
 import pandas as pd
 import json
+import uuid
 from datetime import date
 
 st.set_page_config(layout="wide",page_title="Casa Andina BOT",page_icon="https://upload.wikimedia.org/wikipedia/commons/4/48/Logo_Casa_Andina_Hoteles.png")
@@ -38,6 +39,13 @@ def view_dispo():
     show_modal(respuesta)
     print(datos)
 
+def get_user_uuid():
+    user_uuid = str(uuid.uuid4())
+    return user_uuid
+
+def reset_session():
+    st.session_state["messages"] = []
+    st.session_state["user_uuid"] = get_user_uuid()
 
 def save_message(metadata):
     url = 'https://casa-andina-api-chatbot-v2-yutgchy3pa-uc.a.run.app/add_message'

@@ -3,7 +3,7 @@ import json
 import requests
 import uuid
 import time
-st.set_page_config(page_title="Cinceplanet Chatbot",page_icon="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1GC53b5X0VCsnupZ_407_-C-Og0Z2y_yl8Q&s")
+st.set_page_config(page_title="Cinceplanet bot",page_icon="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1GC53b5X0VCsnupZ_407_-C-Og0Z2y_yl8Q&s")
 
 def get_user_uuid():
     user_uuid = str(uuid.uuid4())
@@ -60,7 +60,6 @@ for message in st.session_state.messages:
 if prompt := st.chat_input("Escribe un mensaje"):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
-        st.write(f"ID: {st.session_state['user_uuid']}")
         st.markdown(prompt)
 
     with st.chat_message("assistant"):
