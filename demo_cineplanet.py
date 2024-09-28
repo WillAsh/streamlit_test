@@ -68,7 +68,8 @@ if prompt := st.chat_input("Escribe un mensaje"):
 
         response = st.write(answer.get("answer"))
         with st.expander("Referencias"):
-            for count, ref in enumerate(answer.get("citations", [])):
-                st.write(f"[{count + 1}]", ref.get("page_content"))
-                st.write("Metadata: ", ref.get("metadata"))
+            if isinstance(answer.get("citations", []), list):
+                for count, ref in enumerate(answer.get("citations", [])):
+                    st.write(f"[{count + 1}]", ref.get("page_content"))
+                    st.write("Metadata: ", ref.get("metadata"))
     st.session_state.messages.append({"role": "assistant", "content": answer.get("answer")})

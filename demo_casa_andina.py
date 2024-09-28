@@ -138,7 +138,8 @@ with col2:
         else:
             for document in documents[:3]:
                 data=document["document"]
-                with st.expander(f"{data['TITULO']}",expanded=True):
+                expander_title = f'<p style="font-size:20px; font-weight:bold;">{data["TITULO"]}</p>'
+                with st.expander(label=expander_title,expanded=True):
                     st.write(f"Descripción: {data['DESCRIPCION']}")
                     col_seg,col_keyword = st.columns([5,7])
                     with col_seg:
