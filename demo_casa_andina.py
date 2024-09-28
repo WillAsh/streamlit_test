@@ -7,6 +7,11 @@ import uuid
 from datetime import date
 
 st.set_page_config(layout="wide",page_title="Casa Andina BOT",page_icon="https://upload.wikimedia.org/wikipedia/commons/4/48/Logo_Casa_Andina_Hoteles.png")
+def local_css(file_name):
+    with open(file_name) as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
+local_css("style.css")
 @st.dialog("Disponibilidad")
 def show_modal(text):
     st.write(text)
@@ -46,28 +51,34 @@ def get_user_uuid():
 def reset_session():
     st.session_state["messages"] = []
     st.session_state["user_uuid"] = get_user_uuid()
+    st.rerun()
 
 def save_message(metadata):
     url = 'https://casa-andina-api-chatbot-v2-yutgchy3pa-uc.a.run.app/add_message'
-    encabezados = {'token': 'chatpgt-token-xbpr435'}
+    encabezados = {'token': 'andina-chatbot-wrfkKF1e5fbfEuCg4o1V7Tpk8iKXGCLttRMHXBCLiv'}
     respuesta = requests.post(url, stream=True, json=metadata, headers=encabezados)
     return True
 
 def send_message(prompt):
     url = 'https://casa-andina-api-chatbot-v2-yutgchy3pa-uc.a.run.app/conversation'
+    metadata = {
+        "userId": "do-user-test-v3",
+        "sessionId": st.session_state["user_uuid"],
+        "chatbotId": "fichas-tecnicas",
+        # "chatbotId": "e3230312-3fed-4ebc-92ad-6e10e2d0e4bb", # PROD
+        "channelType": "WEB"
+    }
     datos = {
         "question": prompt,
-        "metadata" : {
-            "userId": "do-user-test-v3",
-            "sessionId": "do-session-test-v2",
-            "chatbotId": "fichas-tecnicas",
-            "channelType": "WEB"
-        }
+        "metadata" : metadata
     }
     encabezados = {'token': 'andina-chatbot-wrfkKF1e5fbfEuCg4o1V7Tpk8iKXGCLttRMHXBCLiv'}
     respuesta = requests.post(url, stream=True, json=datos, headers=encabezados)
     respuesta= respuesta.json()
-    return respuesta.get("answer")
+    print(respuesta)
+    respuesta["metadata"] = metadata
+    save_message(respuesta)
+    return respuesta
 
 archivo_excel = 'hoteles.xlsx'
 df = pd.read_excel(archivo_excel)
@@ -75,7 +86,8 @@ hoteles_dict = dict(zip(df['Hotel'], df['ID']))
 
 if "messages" not in st.session_state:
     st.session_state["messages"]=[]
-
+if "user_uuid" not in st.session_state:
+    st.session_state["user_uuid"] = get_user_uuid()
 with st.sidebar:
     st.title("Disponibilidad")
     hotelCode= st.selectbox("Selecciona un hotel", df['Hotel'])
@@ -110,21 +122,33 @@ with col1:
         for message in st.session_state.messages:
             with messages.chat_message(message["role"]):
                 st.markdown(message["content"])
-    col3,col4 = st.columns([1,11])
+    col3,col4 = st.columns([2,9])
     with col3:
-        st.button("reset")
+        if st.button("🔄 Reiniciar sesión"):
+            reset_session()
 
     with col4:
         if prompt := st.chat_input("Escribe un mensaje"):
             st.session_state.messages.append({"role": "user", "content": prompt})
             with messages.chat_message("user"):
+                #st.markdown(f"ID:{st.session_state['user_uuid']}")
                 st.markdown(prompt)
             with messages.chat_message("assistant"):
                 question = prompt
                 answer = send_message(question)
                 #answer= "xdsadsadsad"
-                st.markdown(answer)
-                st.session_state.messages.append({"role": "assistant", "content": answer})
+                st.markdown(answer.get("answer"))
+                if answer.get("schema_table", None) is not None:
+                    df = pd.DataFrame(answer["schema_table"])
+                    st.dataframe(df)
+
+                with st.expander("Referencias"):
+                    if isinstance(answer.get("citations", []), list):
+                        print("exp")
+                        for count, ref in enumerate(answer.get("citations", [])):
+                            st.write(f"[{count + 1}]", ref.get("page_content"))
+                            st.write("Metadata: ", ref.get("metadata"))
+                st.session_state.messages.append({"role": "assistant", "content": answer.get("answer")})
 
 with col2:
 
@@ -138,8 +162,7 @@ with col2:
         else:
             for document in documents[:3]:
                 data=document["document"]
-                expander_title = f'<p style="font-size:20px; font-weight:bold;">{data["TITULO"]}</p>'
-                with st.expander(label=expander_title,expanded=True):
+                with st.expander(f"{data['TITULO']}",expanded=True):
                     st.write(f"Descripción: {data['DESCRIPCION']}")
                     col_seg,col_keyword = st.columns([5,7])
                     with col_seg:
