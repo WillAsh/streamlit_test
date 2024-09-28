@@ -38,16 +38,27 @@ def view_dispo():
     show_modal(respuesta)
     print(datos)
 
+
+def save_message(metadata):
+    url = 'https://casa-andina-api-chatbot-v2-yutgchy3pa-uc.a.run.app/add_message'
+    encabezados = {'token': 'chatpgt-token-xbpr435'}
+    respuesta = requests.post(url, stream=True, json=metadata, headers=encabezados)
+    return True
+
 def send_message(prompt):
-    url = 'https://casa-andina-api-chatbot-v1-yutgchy3pa-uc.a.run.app/conversation'
+    url = 'https://casa-andina-api-chatbot-v2-yutgchy3pa-uc.a.run.app/conversation'
     datos = {
-        "question": prompt
+        "question": prompt,
+        "metadata" : {
+            "userId": "do-user-test-v3",
+            "sessionId": "do-session-test-v2",
+            "chatbotId": "fichas-tecnicas",
+            "channelType": "WEB"
+        }
     }
     encabezados = {'token': 'andina-chatbot-wrfkKF1e5fbfEuCg4o1V7Tpk8iKXGCLttRMHXBCLiv'}
     respuesta = requests.post(url, stream=True, json=datos, headers=encabezados)
-    print("dbug",respuesta.text)
     respuesta= respuesta.json()
-    print(respuesta)
     return respuesta.get("answer")
 
 archivo_excel = 'hoteles.xlsx'
@@ -91,20 +102,21 @@ with col1:
         for message in st.session_state.messages:
             with messages.chat_message(message["role"]):
                 st.markdown(message["content"])
-    #col3,col4 = st.columns([4,1])
-    #with col3:
-    if prompt := st.chat_input("Escribe un mensaje"):
-        st.session_state.messages.append({"role": "user", "content": prompt})
-        with messages.chat_message("user"):
-            st.markdown(prompt)
-        with messages.chat_message("assistant"):
-            question = prompt
-            answer = send_message(question)
-            #answer= "xdsadsadsad"
-            st.markdown(answer)
-            st.session_state.messages.append({"role": "assistant", "content": answer})
-    #with col4:
-        #st.button("reset")
+    col3,col4 = st.columns([1,11])
+    with col3:
+        st.button("reset")
+
+    with col4:
+        if prompt := st.chat_input("Escribe un mensaje"):
+            st.session_state.messages.append({"role": "user", "content": prompt})
+            with messages.chat_message("user"):
+                st.markdown(prompt)
+            with messages.chat_message("assistant"):
+                question = prompt
+                answer = send_message(question)
+                #answer= "xdsadsadsad"
+                st.markdown(answer)
+                st.session_state.messages.append({"role": "assistant", "content": answer})
 
 with col2:
 
@@ -120,6 +132,11 @@ with col2:
                 data=document["document"]
                 with st.expander(f"{data['TITULO']}",expanded=True):
                     st.write(f"Descripción: {data['DESCRIPCION']}")
+                    col_seg,col_keyword = st.columns([5,7])
+                    with col_seg:
+                        st.write(f"Segmento: {data['SEGMENTO']}")
+                    with col_keyword:
+                        st.write(f"Keyword: {data['KEYWORD']}")
                     st.markdown(
                         f'<a href="{data["PUBLIC LINK"]}" target="_blank" '
                         f'style="display: inline-block; padding: 0.5rem 1rem; '
