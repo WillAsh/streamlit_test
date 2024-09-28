@@ -3,7 +3,7 @@ import json
 import requests
 import uuid
 import time
-st.set_page_config(page_title="Cinceplanet BOT",page_icon="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1GC53b5X0VCsnupZ_407_-C-Og0Z2y_yl8Q&s")
+st.set_page_config(page_title="Cinceplanet Chatbot",page_icon="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1GC53b5X0VCsnupZ_407_-C-Og0Z2y_yl8Q&s")
 
 def get_user_uuid():
     user_uuid = str(uuid.uuid4())
