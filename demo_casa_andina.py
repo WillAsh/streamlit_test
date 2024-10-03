@@ -18,7 +18,7 @@ def show_modal(text):
 def print_asd():
     print(wdyn)
 def search_docs():
-    url = 'https://casa-andina-api-chatbot-v1-yutgchy3pa-uc.a.run.app/search'
+    url = 'https://casa-andina-api-chatbot-v2-yutgchy3pa-uc.a.run.ap/search'
     header={
         "token" : "andina-chatbot-wrfkKF1e5fbfEuCg4o1V7Tpk8iKXGCLttRMHXBCLiv"
     }
