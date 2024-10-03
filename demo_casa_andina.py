@@ -39,7 +39,7 @@ def view_dispo():
         "adults": int(adults),
         "lang": "ES"
     }
-    respuesta = requests.get(url, json=datos)
+    respuesta = requests.post(url, json=datos)
     respuesta = respuesta.text
     show_modal(respuesta)
     print(datos)
