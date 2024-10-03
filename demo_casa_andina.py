@@ -75,7 +75,7 @@ def send_message(prompt):
     encabezados = {'token': 'andina-chatbot-wrfkKF1e5fbfEuCg4o1V7Tpk8iKXGCLttRMHXBCLiv'}
     respuesta = requests.post(url, stream=True, json=datos, headers=encabezados)
     respuesta= respuesta.json()
-    print(respuesta)
+    #print(respuesta)
     respuesta["metadata"] = metadata
     save_message(respuesta)
     return respuesta
@@ -139,7 +139,7 @@ with col1:
                 #answer= "xdsadsadsad"
                 st.markdown(answer.get("answer"))
                 if answer.get("schema_table", None) is not None:
-                    df = pd.DataFrame(answer["schema_table"])
+                    df = pd.DataFrame(json.loads(answer["schema_table"]))
                     st.dataframe(df)
 
                 with st.expander("Referencias"):
