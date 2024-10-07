@@ -4,7 +4,7 @@ import requests
 import uuid
 import time
 st.set_page_config(page_title="Cinceplanet bot",page_icon="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1GC53b5X0VCsnupZ_407_-C-Og0Z2y_yl8Q&s")
-
+print("running")
 def get_user_uuid():
     user_uuid = str(uuid.uuid4())
     return user_uuid
@@ -73,3 +73,4 @@ if prompt := st.chat_input("Escribe un mensaje"):
                     st.write(f"[{count + 1}]", ref.get("page_content"))
                     st.write("Metadata: ", ref.get("metadata"))
     st.session_state.messages.append({"role": "assistant", "content": answer.get("answer")})
+
