@@ -31,6 +31,10 @@ def search_docs():
 def view_dispo():
     fecha_inicio, fecha_fin = rango_fechas
     url = 'https://api.aplicacionescasaandina.com:20443/Travelclick/avail'
+    headers = {
+        'Content-Type': 'application/json'
+    }
+
     datos = {
         "hotelCode": str(hoteles_dict[hotelCode]),
         "dateIn": fecha_inicio.strftime("%Y-%m-%d"),
@@ -39,7 +43,7 @@ def view_dispo():
         "adults": int(adults),
         "lang": "ES"
     }
-    respuesta = requests.post(url, json=datos)
+    respuesta = requests.post(url, headers=headers , json=datos)
     respuesta = respuesta.text
     show_modal(respuesta)
     print(datos)
