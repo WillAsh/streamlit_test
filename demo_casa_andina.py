@@ -119,7 +119,7 @@ with st.sidebar:
 col1, col2 = st.columns([2, 1],)
 
 with col1:
-    st.title("Demo casa andina")
+    st.title("Demo Casa Andina")
     messages = st.container(height=550)
 
     with messages:
