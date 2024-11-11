@@ -14,6 +14,17 @@ style_marks = """
     }
 </style>
 """
+st.markdown(
+    """
+    <style>
+    /* Establece un ancho inicial alto para la barra lateral */
+    [data-testid="stSidebar"][aria-expanded="true"] {
+        width: 550px; /* Ajusta este valor para el ancho deseado */
+    }
+</style>
+    """,
+    unsafe_allow_html=True,
+)
 @st.dialog("Highlights")
 def show_modal(text):
     st.markdown(style_marks+text, unsafe_allow_html=True)
@@ -64,7 +75,7 @@ with st.sidebar:
     )
     search_type = search_type_mapping[search_type_visible]
 
-    if query := st.text_input("¿Cual es tu consulta?"):
+    if query := st.text_input("¿Qué documento necesitas?"):
 
         data = [
             {
