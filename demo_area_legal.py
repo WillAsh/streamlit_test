@@ -396,7 +396,7 @@ if expediente_seleccionado:
     st.write(expediente_seleccionado["resumen"])
 
     chips = "Keywords:"+" ".join([
-                         f"<span style='background-color:green; border-radius:12px; padding:5px 10px; margin:5px; display:inline-block;'>{text}</span>"
+                         f"<span style='background-color:#3d9df3; border-radius:12px; padding:5px 10px; margin:5px; display:inline-block;'>{text}</span>"
                          for text in expediente_seleccionado["keywords"]])
 
     # Mostrar en Streamlit como HTML
