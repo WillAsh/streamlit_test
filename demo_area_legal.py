@@ -9,7 +9,7 @@ st.set_page_config(layout="wide")
 def show_modal(text):
     st.markdown(text, unsafe_allow_html=True)
 
-st.markdown("""
+sad='''st.markdown("""
     <style>
     .stRadio [role=radiogroup]{
         padding: 10px;
@@ -18,7 +18,7 @@ st.markdown("""
     }
 
     </style>
-""", unsafe_allow_html=True)
+""", unsafe_allow_html=True)'''
 
 def search_docs():
     url = 'https://dev-legal-search-yutgchy3pa-uc.a.run.app/search'
@@ -353,23 +353,36 @@ with st.sidebar:
                     st.write(f"Ubicación: {detalles['ubicacion']}")
                 if "highlights" in document:
                     col_abrir,col_highlight,col_link = st.columns([4,5,3])
+
+                    with col_abrir:
+                        if st.button(label="Abrir detalles", key=idx):
+                            expediente_seleccionado = document["document"]
                     with col_highlight:
-                        if st.button(label="Ver coincidencias"):
+                        if st.button(label="Ver coincidencias",key=f"button2_{idx}"):
                             show_modal(document["html_highlights"])
+                    with col_link:
+                        st.markdown(
+                            f'<a href="{document["document"]["file"]["public_url"]}" target="_blank" '
+                            f'style="display: inline-flex; padding:0.25rem 0.75rem; '
+                            f'color: white; background-color: #2B2C36; border:1px solid rgba(250, 250, 250, 0.2);border-radius:0.5rem;'
+                            f' text-align: center; text-decoration: none; height: 1.5rem'
+                            f'font-weight: 400; font-size: 1rem;">Ver archivo</a>',
+                            unsafe_allow_html=True
+                        )
                 else:
                     col_abrir,col_link = st.columns([6,6])
-                with col_abrir:
-                    if st.button(label="Abrir detalles", key=idx):
-                        expediente_seleccionado = document["document"]
-                with col_link:
-                    st.markdown(
-                        f'<a href="{document["document"]["file"]["public_url"]}" target="_blank" '
-                        f'style="display: inline-flex; padding:0.25rem 0.75rem; '
-                        f'color: white; background-color: #2B2C36; border:1px solid rgba(250, 250, 250, 0.2);border-radius:0.5rem;'
-                        f' text-align: center; text-decoration: none; height: 1.5rem'
-                        f'font-weight: 400; font-size: 1rem;">Ver archivo</a>',
-                        unsafe_allow_html=True
-                    )
+                    with col_abrir:
+                        if st.button(label="Abrir detalles", key=idx):
+                            expediente_seleccionado = document["document"]
+                    with col_link:
+                        st.markdown(
+                            f'<a href="{document["document"]["file"]["public_url"]}" target="_blank" '
+                            f'style="display: inline-flex; padding:0.25rem 0.75rem; '
+                            f'color: white; background-color: #2B2C36; border:1px solid rgba(250, 250, 250, 0.2);border-radius:0.5rem;'
+                            f' text-align: center; text-decoration: none; height: 1.5rem'
+                            f'font-weight: 400; font-size: 1rem;">Ver archivo</a>',
+                            unsafe_allow_html=True
+                        )
 
 if expediente_seleccionado:
     st.header("Detalles del caso", divider=True)
