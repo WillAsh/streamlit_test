@@ -5,9 +5,19 @@ import json
 import os
 
 st.set_page_config(layout="wide")
+
+style_marks = """
+<style>
+    mark {
+        background-color: yellow;
+        color: black;
+    }
+</style>
+"""
 @st.dialog("Highlights")
 def show_modal(text):
-    st.markdown(text, unsafe_allow_html=True)
+    st.markdown(style_marks+text, unsafe_allow_html=True)
+
 
 sad='''st.markdown("""
     <style>
@@ -42,8 +52,9 @@ with st.sidebar:
     st.markdown("### Tipo de Búsqueda")
 
     search_type_mapping = {
-        "Por Contexto": "vector",
-        "Por keyword (indexada)": "index"
+        "Por keyword (indexada)": "index",
+        "Por Contexto": "vector"
+
     }
     search_type_visible = st.radio(
         "Seleccione el tipo de búsqueda",
